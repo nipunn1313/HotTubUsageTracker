@@ -16,6 +16,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven(url="file:///Users/nipunn/src/android-convexmobile/repo")
     }
 }
 

@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    kotlin("plugin.serialization") version "1.9.0"
 }
 
 android {
@@ -66,4 +67,25 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(libs.convexmobile) {
+        artifact {
+            type = "aar"
+        }
+    }
+    implementation(libs.dotenv.kotlin)
+    implementation(libs.kotlinx.serialization.json)
+}
+
+tasks {
+    register<Copy>("copyDotEnvToAssets") {
+        from("$rootDir/.env.local")
+        into("$rootDir/app/src/debug/assets")
+        rename {
+            "env"
+        }
+    }
+
+    named("preBuild") {
+        dependsOn("copyDotEnvToAssets")
+    }
 }
