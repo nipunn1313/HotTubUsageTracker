@@ -1,8 +1,10 @@
 import { v } from "convex/values";
 import { internalMutation, mutation, query } from "./_generated/server";
+import { TaskValidator } from "./schema";
 
 export const get = query({
   args: {},
+  returns: v.array(v.object(TaskValidator)),
   handler: async (ctx) => {
     return await ctx.db
       .query("tasks")
@@ -17,17 +19,17 @@ export const setCompleted = mutation({
     taskId: v.id("tasks"),
     completed: v.string(),
   },
+  returns: v.null(),
   handler: async (ctx, { taskId, completed }) => {
     // hack until we figure out how to send booleans from android
     const isCompleted = completed === "true";
     await ctx.db.patch(taskId, { isCompleted });
-    // hack until we figure out how to return null or strings or undefined;
-    return {};
   },
 });
 
 export const createHotTubTask = internalMutation({
   args: { daysAgo: v.optional(v.number()) },
+  returns: v.null(),
   handler: async (ctx, { daysAgo }) => {
     const millisAgo = (daysAgo || 0) * 86400 * 1000;
     const today = new Date(Date.now() - millisAgo).toLocaleDateString("en-CA");

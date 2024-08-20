@@ -71,7 +71,7 @@ fun Tasks(client: ConvexClient, modifier: Modifier = Modifier) {
             Row {
                 Checkbox(checked = task.isCompleted, onCheckedChange = { checked ->
                     coroutineScope.launch {
-                        client.mutation("tasks:setCompleted", mapOf("taskId" to task._id, "completed" to checked))
+                        client.mutation<Unit?>("tasks:setCompleted", mapOf("taskId" to task._id, "completed" to checked))
                     }
                 })
                 Text(text = task.text)
