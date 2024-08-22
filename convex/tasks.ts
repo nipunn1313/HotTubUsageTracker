@@ -17,13 +17,12 @@ export const get = query({
 export const setCompleted = mutation({
   args: {
     taskId: v.id("tasks"),
-    completed: v.string(),
+    completed: v.boolean(),
   },
   returns: v.null(),
   handler: async (ctx, { taskId, completed }) => {
     // hack until we figure out how to send booleans from android
-    const isCompleted = completed === "true";
-    await ctx.db.patch(taskId, { isCompleted });
+    await ctx.db.patch(taskId, { isCompleted: completed });
   },
 });
 

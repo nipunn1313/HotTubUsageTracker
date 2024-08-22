@@ -20,22 +20,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.example.hottubusagetracker.ui.theme.HotTubUsageTrackerTheme
 import dev.convex.android.ConvexClient
-import io.github.cdimascio.dotenv.dotenv
 import kotlinx.coroutines.launch
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val dotenv = dotenv {
-            directory = "/assets"
-            filename = "env"
-        }
-        val convex = ConvexClient(dotenv["CONVEX_URL"])
+        val convex = ConvexClient("https://dusty-minnow-253.convex.cloud")
         setContent {
             HotTubUsageTrackerTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
@@ -50,7 +45,11 @@ class MainActivity : ComponentActivity() {
 }
 
 @Serializable
-data class Task(val _id: String,val text: String, val isCompleted: Boolean)
+data class Task(
+    @SerialName("_id") val id: String,
+    val text: String,
+    val isCompleted: Boolean,
+)
 
 @Composable
 fun Tasks(client: ConvexClient, modifier: Modifier = Modifier) {
@@ -71,7 +70,7 @@ fun Tasks(client: ConvexClient, modifier: Modifier = Modifier) {
             Row {
                 Checkbox(checked = task.isCompleted, onCheckedChange = { checked ->
                     coroutineScope.launch {
-                        client.mutation<Unit?>("tasks:setCompleted", mapOf("taskId" to task._id, "completed" to checked))
+                        client.mutation("tasks:setCompleted", mapOf("taskId" to task.id, "completed" to checked))
                     }
                 })
                 Text(text = task.text)

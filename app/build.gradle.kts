@@ -67,25 +67,8 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation(libs.convexmobile) {
-        artifact {
-            type = "aar"
-        }
+    implementation("dev.convex:android-convexmobile:0.2.0@aar") {
+        isTransitive = true
     }
-    implementation(libs.dotenv.kotlin)
     implementation(libs.kotlinx.serialization.json)
-}
-
-tasks {
-    register<Copy>("copyDotEnvToAssets") {
-        from("$rootDir/.env.local")
-        into("$rootDir/app/src/debug/assets")
-        rename {
-            "env"
-        }
-    }
-
-    named("preBuild") {
-        dependsOn("copyDotEnvToAssets")
-    }
 }
